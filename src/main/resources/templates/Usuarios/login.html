@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bruder - Iniciar Sesión</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background: linear-gradient(135deg, #1b263b, #0d1b2a);
+			margin: 0;
+			padding: 0;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		main {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+		}
+
+		.book-container {
+			width: 850px;
+			height: 520px;
+			background: #f9f9fb;
+			border-radius: 15px;
+			display: flex;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+			overflow: hidden;
+			position: relative;
+		}
+
+		.left-page {
+			flex: 1;
+			background: linear-gradient(160deg, rgba(27, 38, 59, 0.95), rgba(15, 32, 39, 0.95)),
+				url('https://www.bruder.com.co/wp-content/uploads/bruder-cultura-cervecera-cervezas-llenas-experimentacion.jpg') center/cover;
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			color: white;
+			padding: 30px;
+		}
+
+		.logo {
+			width: 120px;
+			height: auto;
+			margin-bottom: 20px;
+			filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+		}
+
+		.overlay-text {
+			text-align: center;
+		}
+
+		.overlay-text h1 {
+			font-size: 2.3rem;
+			margin: 0;
+			color: #e0e6ed;
+			letter-spacing: 1px;
+		}
+
+		.overlay-text p {
+			color: #cfd8dc;
+			margin-top: 10px;
+			font-size: 1rem;
+		}
+
+		.right-page {
+			flex: 1;
+			background-color: #ffffff;
+			padding: 40px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		h2 {
+			text-align: center;
+			color: #1b263b;
+			margin-bottom: 25px;
+			font-size: 28px;
+			border-bottom: 2px solid #a8b8c8;
+			padding-bottom: 10px;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 18px;
+		}
+
+		label {
+			color: #1b263b;
+			font-weight: 600;
+		}
+
+		input {
+			padding: 10px;
+			border: 1px solid #c5ced6;
+			border-radius: 8px;
+			font-size: 16px;
+			outline: none;
+			transition: 0.3s;
+		}
+
+		input:focus {
+			border-color: #415a77;
+			box-shadow: 0 0 6px rgba(65, 90, 119, 0.5);
+		}
+
+		button {
+			background-color: #1b263b;
+			color: white;
+			padding: 12px;
+			border: none;
+			border-radius: 8px;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: 0.3s;
+		}
+
+		button:hover {
+			background-color: #415a77;
+		}
+
+		.register-link {
+			text-align: center;
+			margin-top: 20px;
+			font-size: 15px;
+		}
+
+		.register-link a {
+			color: #415a77;
+			text-decoration: none;
+			font-weight: bold;
+		}
+
+		.register-link a:hover {
+			text-decoration: underline;
+		}
+
+		.mensaje-error {
+			color: #c62828;
+			text-align: center;
+			margin-bottom: 10px;
+		}
+
+		.mensaje-exito {
+			color: #2e7d32;
+			text-align: center;
+			margin-bottom: 10px;
+		}
+
+		.book-container::before,
+		.book-container::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			width: 10px;
+			height: 100%;
+			background: #dfe6ed;
+			z-index: 2;
+		}
+
+		.book-container::before {
+			left: 50%;
+		}
+
+		.book-container::after {
+			right: 0;
+			background: #b0bec5;
+		}
+
+		footer {
+			text-align: center;
+			color: #778DA9;
+			font-size: 14px;
+			padding: 12px 0;
+			border-top: 1px solid rgba(65, 90, 119, 0.4);
+			width: 100%;
+			background-color: transparent;
+			margin-top: auto;
+		}
+	</style>
+</head>
+
+<body>
+	<main>
+		<div class="book-container">
+			<div class="left-page">
+				<img th:src="@{/images/Bruder.png}" alt="Logo Bruder" class="logo">
+				<div class="overlay-text">
+					<h1>Bruder</h1>
+					<p>Tu cerveza artesanal con historia 🍺</p>
+				</div>
+			</div>
+
+			<div class="right-page">
+				<h2>Iniciar Sesión</h2>
+
+				<!-- MENSAJES -->
+				<div th:if="${param.error}" class="mensaje-error">
+					Correo o contraseña incorrectos ❌
+				</div>
+
+				<div th:if="${param.logout}" class="mensaje-exito">
+					Sesión cerrada correctamente ✅
+				</div>
+
+				<!-- FORMULARIO LOGIN -->
+				<form th:action="@{/login}" method="post">
+
+					<label for="correo">Correo Electrónico</label>
+					<input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+
+					<label for="password">Contraseña</label>
+					<input type="password" id="password" name="password" placeholder="••••••••" required>
+
+					<button type="submit">Ingresar</button>
+				</form>
+
+
+				<div class="register-link">
+					¿No tienes cuenta?
+					<a th:href="@{/registro}">Regístrate aquí</a>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍻</p>
+	</footer>
+</body>
+
+</html>

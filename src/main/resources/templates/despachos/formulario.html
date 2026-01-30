@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Nuevo Despacho - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<style>
+	/* Hace blanco el ícono del calendario dentro del input date */
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		filter: invert(1);
+		cursor: pointer;
+	}
+</style>
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#415a77]/60 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+			<a th:href="@{/movimientos}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+	<!-- Contenido principal -->
+	<main class="flex-1 flex flex-col">
+		<header class="flex items-center justify-between bg-[#1b263b]/80 backdrop-blur-sm px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">Nuevo Despacho</h1>
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<section class="flex-1 p-10">
+			<div class="bg-[#1b263b]/60 rounded-2xl p-10 shadow-xl border border-[#415a77]/40">
+				<h2 class="text-3xl font-bold mb-8 text-center text-white">🚚 Registrar Nuevo Despacho</h2>
+
+				<form id="formDespacho" th:action="@{/despachos/guardar}" th:object="${despacho}" method="post"
+					class="space-y-6">
+
+					<!-- Fecha -->
+					<!-- Fecha, Producto y Punto de Venta -->
+					<div class="grid grid-cols-3 gap-6">
+						<!-- Fecha -->
+						<div>
+							<label class="block mb-2 text-sm font-semibold">📅 Fecha del Despacho:</label>
+							<input type="date" th:field="*{fechaDespacho}" required class="w-full px-4 py-2 rounded-lg bg-[#0d1b2a]/80 text-white border border-[#415a77]/40 
+								focus:ring-2 focus:ring-[#778DA9]">
+						</div>
+
+						<!-- Producto -->
+						<div>
+							<label class="block mb-2 text-sm font-semibold">🍺 Selecciona el Producto:</label>
+							<select id="selectProducto" th:field="*{inventarioFinal}" required
+								class="w-full px-4 py-2 rounded-lg bg-[#0d1b2a]/80 border border-[#415a77]/40 text-white">
+
+								<option value="">-- Selecciona una cerveza --</option>
+
+								<option th:each="item : ${inventarioDisponible}" th:value="${item.id}"
+									th:data-nombre="${item.cerveza.nombre}" th:data-tipo="${item.cerveza.tipo}"
+									th:data-lote="${item.lote}" th:data-numbarril="${item.numBarril}"
+									th:data-stock="${item.cantidad}" th:text="${item.cerveza.nombre + ' (' + item.cerveza.tipo + ') - ' +
+							                    (item.cerveza.tipo == 'Barril'
+							                        ? 'Barril: ' + item.numBarril
+							                        : 'Lote: ' + item.lote)}">
+								</option>
+
+							</select>
+
+
+						</div>
+
+						<!-- Punto de Venta -->
+						<div>
+							<label class="block mb-2 text-sm font-semibold">🏪 Punto de Venta:</label>
+							<select th:field="*{puntoVenta}" required
+								class="w-full px-4 py-2 rounded-lg bg-[#0d1b2a]/80 border border-[#415a77]/40 text-white">
+								<option value="">-- Selecciona un punto de venta --</option>
+								<option th:each="pv : ${puntosVenta}" th:value="${pv.id}" th:text="${pv.nombre}">
+								</option>
+							</select>
+						</div>
+					</div>
+
+
+					<!-- Detalles -->
+					<div class="grid grid-cols-2 gap-4">
+						<div>
+							<label class="block mb-1 text-sm font-semibold">Nombre:</label>
+							<input id="nombre" type="text" readonly
+								class="w-full px-3 py-2 bg-[#0d1b2a]/60 rounded border border-[#415a77]/40 text-white">
+						</div>
+						<div>
+							<label class="block mb-1 text-sm font-semibold">Tipo:</label>
+							<input id="tipo" type="text" readonly
+								class="w-full px-3 py-2 bg-[#0d1b2a]/60 rounded border border-[#415a77]/40 text-white">
+						</div>
+						<div>
+							<label class="block mb-1 text-sm font-semibold">Lote:</label>
+							<input id="lote" type="text" readonly
+								class="w-full px-3 py-2 bg-[#0d1b2a]/60 rounded border border-[#415a77]/40 text-white">
+						</div>
+						<div>
+							<label class="block mb-1 text-sm font-semibold">Número de Barril:</label>
+							<input id="numBarril" type="text" readonly
+								class="w-full px-3 py-2 bg-[#0d1b2a]/60 rounded border border-[#415a77]/40 text-white">
+						</div>
+
+					</div>
+
+					<!-- Cantidad -->
+					<div class="grid grid-cols-2 gap-6">
+						<!-- Cantidad -->
+						<div>
+							<label class="block mb-2 text-sm font-semibold">📦 Cantidad a Despachar:</label>
+							<input type="number" th:field="*{cantidad}" id="inputCantidad" min="1" required class="w-full px-4 py-2 rounded-lg bg-[#0d1b2a]/80 border border-[#415a77]/40 
+								focus:ring-2 focus:ring-[#778DA9] text-white" placeholder="Cantidad a despachar en unidades">
+							<small id="stockDisponible" class="text-xs text-[#AFC1D6]"></small>
+						</div>
+
+						<!-- Observación -->
+						<div>
+							<label class="block mb-2 text-sm font-semibold">📝 Observación:</label>
+							<textarea th:field="*{observacion}" rows="3"
+								class="w-full px-4 py-2 rounded-lg bg-[#0d1b2a]/80 border border-[#415a77]/40 text-white resize-none"
+								placeholder="Notas o comentarios..."></textarea>
+						</div>
+					</div>
+
+
+					<!-- Botones -->
+					<div class="flex justify-between mt-8">
+						<a href="javascript:void(0)" onclick="confirmarCancelar()"
+							class="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 transition rounded-md px-4 py-2 font-semibold">
+							<i class="bi bi-arrow-left"></i> Cancelar
+						</a>
+
+						<button type="button" onclick="confirmarGuardar()"
+							class="flex items-center gap-2 bg-green-600 hover:bg-green-700 transition rounded-md px-4 py-2 font-semibold">
+							<i class="bi bi-save"></i> Guardar
+						</button>
+
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<footer class="text-center text-[#778DA9] text-sm py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍺</p>
+		</footer>
+	</main>
+
+	<script>
+		const select = document.getElementById('selectProducto');
+		const nombre = document.getElementById('nombre');
+		const tipo = document.getElementById('tipo');
+		const lote = document.getElementById('lote');
+		const numBarril = document.getElementById('numBarril');
+		const cantidad = document.getElementById('inputCantidad');
+		const stockText = document.getElementById('stockDisponible');
+
+		select.addEventListener('change', () => {
+			const opt = select.options[select.selectedIndex];
+			const nombreVal = opt.getAttribute('data-nombre');
+			const tipoVal = opt.getAttribute('data-tipo');
+			const loteVal = opt.getAttribute('data-lote');
+			const numBarrilVal = opt.getAttribute('data-numbarril');
+			const stockVal = opt.getAttribute('data-stock');
+
+			nombre.value = nombreVal || '';
+			tipo.value = tipoVal || '';
+			lote.value = loteVal || '';
+			numBarril.value = numBarrilVal || '';
+
+			// Resetea cantidad y muestra el stock disponible
+			cantidad.max = stockVal || 0;
+			cantidad.value = '';
+			stockText.textContent = stockVal
+				? `Stock disponible: ${stockVal} unidades.`
+				: 'Sin stock disponible.';
+		});
+
+		cantidad.addEventListener('input', () => {
+			if (parseInt(cantidad.value) > parseInt(cantidad.max)) {
+				cantidad.value = cantidad.max;
+			}
+		});
+
+		function confirmarGuardar() {
+			Swal.fire({
+				title: '¿Guardar despacho?',
+				text: 'Se registrará el despacho con la información ingresada.',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#16a34a', // verde
+				cancelButtonColor: '#6b7280',  // gris
+				confirmButtonText: 'Sí, guardar',
+				cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					document.getElementById('formDespacho').submit();
+				}
+			});
+		}
+
+		// 🔴 CONFIRMAR CANCELAR
+		function confirmarCancelar() {
+			Swal.fire({
+				title: '¿Cancelar registro?',
+				text: 'Los datos ingresados se perderán.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#dc2626', // rojo
+				cancelButtonColor: '#6b7280',
+				confirmButtonText: 'Sí, salir',
+				cancelButtonText: 'Continuar'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = '/despachos/listar';
+				}
+			});
+		}
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>

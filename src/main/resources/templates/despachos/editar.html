@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Editar Despacho - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#415a77]/60 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+			<a th:href="@{/movimientos}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+	<!-- Contenido principal -->
+	<main class="flex-1 flex flex-col w-full">
+		<header class="flex items-center justify-between bg-[#1b263b]/80 px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">Editar Despacho</h1>
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<section class="flex justify-center items-center flex-1 px-8 py-10">
+			<div class="bg-[#1b263b]/90 p-8 rounded-2xl shadow-lg w-full max-w-3xl">
+				<form id="formActualizar" th:action="@{/despachos/actualizar}" th:object="${despacho}" method="post"
+					class="grid grid-cols-2 gap-6">
+
+					<!-- Campo oculto para ID -->
+					<input type="hidden" th:field="*{id}" />
+
+					<!-- Fecha -->
+					<div>
+						<label class="block mb-1">Fecha Despacho:</label>
+						<input id="fechaDespacho" name="fechaDespacho" th:field="*{fechaDespacho}" type="text"
+							placeholder="dd/mm/aaaa"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500 focus:outline-none focus:ring focus:ring-[#778DA9]"
+							onfocus="this.type='date'" onblur="if(!this.value) this.type='text'">
+					</div>
+
+					<!-- Cantidad -->
+					<div>
+						<label class="block mb-1">Cantidad:</label>
+						<input type="number" min="1" th:field="*{cantidad}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500" />
+					</div>
+					<input type="hidden" th:field="*{inventarioFinal.id}" />
+
+					<!-- Cerveza -->
+					<div>
+						<label class="block mb-1">Cerveza:</label>
+						<select id="cervezaSelect" th:field="*{cerveza.id}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500">
+							<option value="" disabled>Seleccione una cerveza</option>
+							<option th:each="c : ${cervezas}" th:value="${c.id}" th:data-tipo="${c.tipo}"
+								th:text="${c.nombre}" th:selected="${despacho.cerveza.id == c.id}"></option>
+						</select>
+					</div>
+
+					<!-- Tipo -->
+					<div>
+						<label class="block mb-1">Tipo:</label>
+						<input type="text" id="tipoCerveza" readonly th:value="${despacho.cerveza.tipo}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500 opacity-75" />
+					</div>
+
+					<!-- Lote -->
+					<div>
+						<label class="block mb-1">Lote:</label>
+						<select id="loteSelect" th:field="*{lote}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500">
+							<option value="" disabled>Seleccione el lote</option>
+							<option th:each="l : ${lotes}" th:value="${l.lote}" th:data-cerveza="${l.cerveza.id}"
+								th:data-num-barril="${l.numBarril}" th:text="${l.lote}"
+								th:selected="${despacho.lote == l.lote}"></option>
+						</select>
+					</div>
+
+					<!-- Número de Barril -->
+					<div id="numBarrilDiv"
+						th:style="${despacho.cerveza.tipo == 'Barril'} ? 'display:block;' : 'display:none;'">
+						<label class="block mb-1">Número de Barril:</label>
+						<select id="numBarrilSelect" th:field="*{numBarril}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500">
+							<option value="" disabled>Seleccione el número de barril</option>
+							<option th:each="l : ${lotes}" th:value="${l.numBarril}" th:data-cerveza="${l.cerveza.id}"
+								th:text="${l.numBarril}" th:selected="${despacho.numBarril == l.numBarril}">
+							</option>
+						</select>
+					</div>
+
+					<!-- Punto de Venta -->
+					<div>
+						<label class="block mb-1">Punto de Venta:</label>
+						<select th:field="*{puntoVenta.id}"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500">
+							<option value="" disabled>Seleccione el punto de venta</option>
+							<option th:each="pv : ${puntosVenta}" th:value="${pv.id}" th:text="${pv.nombre}"
+								th:selected="${despacho.puntoVenta.id == pv.id}">
+							</option>
+						</select>
+					</div>
+
+					<!-- Observación -->
+					<div class="col-span-2">
+						<label class="block mb-1">Observación:</label>
+						<textarea th:field="*{observacion}" rows="3"
+							class="w-full p-2 rounded bg-[#415a77] text-white border border-gray-500"></textarea>
+					</div>
+
+					<!-- Botones -->
+					<div class="col-span-2 flex justify-center gap-4 mt-6">
+						<button type="button" onclick="confirmarActualizacion()"
+							class="bg-[#415a77] text-white px-6 py-2 rounded-lg hover:bg-[#778DA9] transition flex items-center gap-2">
+							<i class="bi bi-save"></i> Actualizar
+						</button>
+
+						<a href="#" onclick="confirmarCancelar()"
+							class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg flex items-center gap-2">
+							<i class="bi bi-x-circle-fill"></i> Cancelar
+						</a>
+
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<footer class="text-center text-[#778DA9] text-sm py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍺</p>
+		</footer>
+	</main>
+
+	<!-- Script -->
+	<script>
+		const cervezaSelect = document.getElementById('cervezaSelect');
+		const tipoCerveza = document.getElementById('tipoCerveza');
+		const loteSelect = document.getElementById('loteSelect');
+		const numBarrilDiv = document.getElementById('numBarrilDiv');
+		const numBarrilSelect = document.getElementById('numBarrilSelect');
+
+		cervezaSelect.addEventListener('change', () => {
+			const selectedCerveza = cervezaSelect.value;
+			const tipo = cervezaSelect.options[cervezaSelect.selectedIndex]?.dataset.tipo || '';
+			tipoCerveza.value = tipo;
+
+			Array.from(loteSelect.options).forEach(opt => {
+				if (!opt.value) return;
+				opt.hidden = opt.dataset.cerveza !== selectedCerveza;
+			});
+
+			Array.from(numBarrilSelect.options).forEach(opt => {
+				if (!opt.value) return;
+				opt.hidden = opt.dataset.cerveza !== selectedCerveza;
+			});
+
+			loteSelect.value = '';
+			numBarrilSelect.value = '';
+			numBarrilDiv.style.display = tipo.toLowerCase() === 'barril' ? 'block' : 'none';
+		});
+
+		function confirmarActualizacion() {
+			Swal.fire({
+				title: '¿Guardar cambios?',
+				text: 'Se actualizará la información del despacho.',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#aaa',
+				confirmButtonText: 'Sí, actualizar',
+				cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					document.querySelector("#formActualizar").submit();
+				}
+			});
+		}
+		
+		function confirmarCancelar() {
+				Swal.fire({
+					title: '¿Cancelar edición?',
+					text: 'Los cambios no guardados se perderán',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#6b7280', // gris
+					cancelButtonColor: '#415a77',
+					confirmButtonText: 'Sí, salir',
+					cancelButtonText: 'Seguir editando',
+					reverseButtons: true
+				}).then((result) => {
+					if (result.isConfirmed) {
+						window.location.href = '/despachos/listar';
+					}
+				});
+			}
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>

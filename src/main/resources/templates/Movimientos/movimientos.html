@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Movimientos - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/filtros.css}">
+</head>
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+
+			<a th:href="@{/movimientos}" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#415a77]/60">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+	<!-- Contenido principal -->
+	<main class="flex-1 flex flex-col">
+		<!-- Header -->
+		<header class="flex items-center justify-between bg-[#1b263b]/80 backdrop-blur-sm px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">Movimientos de Cerveza</h1>
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<!-- Contenido -->
+		<section class="flex-1 p-10">
+
+			<div class="flex justify-end mb-6">
+				<div class="flex gap-4">
+					<a th:href="@{/movimientos/exportarExcel(
+					    cerveza=${filtroCerveza},
+					    puntoVenta=${filtroPuntoVenta},
+					    tipoCerveza=${filtroTipo},
+					    fechaInicio=${filtroFechaInicio},
+					    fechaFin=${filtroFechaFin}
+					)}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 transition">
+						<i class="bi bi-file-earmark-excel"></i> Exportar Excel
+					</a>
+				</div>
+			</div>
+			<div class="bg-[#1b263b]/70 p-6 rounded-2xl shadow-lg border border-[#415a77]/40 max-w-7xl mx-auto">
+
+				<div class="flex justify-center mb-6">
+					<h3 class="text-3xl font-bold text-[#E0E1DD] flex items-center gap-3 text-center">
+						🍺 Historial de Movimientos
+					</h3>
+				</div>
+
+				<!-- FILTROS -->
+				<form method="get" th:action="@{/movimientos/filtrar}"
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+
+					<!-- 🔘 BOTONES -->
+					<div class="lg:col-span-5 flex justify-center gap-6 mt-6">
+						<button type="submit"
+							class="bg-[#415a77] hover:bg-[#778DA9] text-white px-6 py-2 rounded-lg font-semibold">
+							<i class="bi bi-funnel-fill"></i>
+							Aplicar filtros
+						</button>
+
+						<a th:href="@{/movimientos}"
+							class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">
+							<i class="bi bi-x-circle-fill"></i>
+							Quitar filtros
+						</a>
+					</div>
+
+					<!-- 🍺 CERVEZA -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Cerveza</label>
+						<select name="cerveza" class="select-checkbox w-full" multiple>
+							<option th:each="c : ${cervezas}" th:value="${c}" th:text="${c}"
+								th:selected="${filtroCerveza != null && filtroCerveza.contains(c)}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🏪 PUNTO DE VENTA -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Punto de Venta</label>
+
+						<select name="puntoVenta" class="select-checkbox w-full" multiple>
+							<option th:if="${#lists.isEmpty(puntosVenta)}" disabled>
+								Sin puntos de venta
+							</option>
+
+							<option th:each="p : ${puntosVenta}" th:value="${p}" th:text="${p}"
+								th:selected="${filtroPuntoVenta != null && filtroPuntoVenta.contains(p)}">
+							</option>
+						</select>
+					</div>
+
+
+					<!-- 🧪 TIPO -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Tipo de Cerveza</label>
+						<select name="tipoCerveza" class="select-normal">
+							<option value="">Todos</option>
+							<option value="BOTELLA" th:selected="${filtroTipo == 'BOTELLA'}">Botella</option>
+							<option value="BARRIL" th:selected="${filtroTipo == 'BARRIL'}">Barril</option>
+						</select>
+					</div>
+
+					<!-- 📅 FECHAS -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Fechas</label>
+						<div class="flex gap-2">
+							<div class="date-wrapper w-full">
+								<input type="date" name="fechaInicio" class="input-date"
+									th:value="${filtroFechaInicio}">
+								<i class="bi bi-calendar-event"></i>
+							</div>
+
+							<div class="date-wrapper w-full">
+								<input type="date" name="fechaFin" class="input-date" th:value="${filtroFechaFin}">
+								<i class="bi bi-calendar-event"></i>
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+				<!-- Tabla -->
+				<div class="overflow-x-auto rounded-xl">
+					<table class="min-w-full border border-[#415a77]/40 text-sm text-[#E0E1DD]">
+						<thead class="bg-[#415a77] text-white text-center">
+							<tr>
+								<th class="border border-[#415a77]/40 p-2">Fecha</th>
+								<th class="border border-[#415a77]/40 p-2">Tipo</th>
+								<th class="border border-[#415a77]/40 p-2">Cerveza</th>
+								<th class="border border-[#415a77]/40 p-2">Tipo de Cerveza</th>
+								<th class="border border-[#415a77]/40 p-2">Cantidad</th>
+								<th class="border border-[#415a77]/40 p-2">Punto de Venta</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							<tr th:each="m : ${movimientos}" class="hover:bg-[#415a77]/20 transition text-center">
+								<td class="border border-[#415a77]/40 p-2" th:text="${m.fechaMovimiento}"></td>
+
+								<!-- Tipo con color -->
+								<td class="border border-[#415a77]/40 p-2 font-semibold" th:text="${m.tipoMovimiento}"
+									th:classappend="${m.tipoMovimiento == 'INGRESO'} ? 'text-green-400' : 'text-red-400'">
+								</td>
+
+								<td class="border border-[#415a77]/40 p-2" th:text="${m.cerveza.nombre}"></td>
+								<td class="border border-[#415a77]/40 p-2" th:text="${m.cerveza.tipo}"></td>
+								<td class="border border-[#415a77]/40 p-2" th:text="${m.cantidad}"></td>
+								<td class="border border-[#415a77]/40 p-2"
+									th:text="${m.puntoVenta != null ? m.puntoVenta.nombre : '-'}"></td>
+							</tr>
+
+							<tr th:if="${#lists.isEmpty(movimientos)}">
+								<td colspan="6" class="text-center text-gray-400 p-4 italic">
+									No hay movimientos registrados todavía 🍺
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="text-center text-[#778DA9] text-sm mt-6 py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍻</p>
+		</footer>
+	</main>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<script>
+		$(document).ready(function () {
+
+			function formatOption(option) {
+				if (!option.id) {
+					return option.text;
+				}
+
+				const checkbox = $('<span>' +
+					'<input type="checkbox" style="margin-right:6px;" />' +
+					option.text +
+					'</span>');
+
+				return checkbox;
+			}
+
+			$('.select-checkbox').select2({
+				placeholder: 'Seleccionar',
+				closeOnSelect: false,
+				width: '100%',
+				templateResult: formatOption,
+				templateSelection: formatOption
+			});
+
+		});
+	</script>
+
+
+</body>
+
+</html>

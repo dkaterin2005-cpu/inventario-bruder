@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Bajas - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+<style>
+	/* ===============================
+	   SELECT2 LIMPIO – DARK UI
+	================================ */
+
+	/* ocultar select real */
+	select.select-checkbox {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	/* contenedor */
+	.select2-container {
+		width: 100% !important;
+		font-size: 0.85rem;
+	}
+
+	/* caja */
+	.select2-selection--multiple {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.5rem;
+		min-height: 42px;
+		display: flex;
+		align-items: center;
+		padding: 0 12px;
+	}
+
+	/* texto render */
+	.select2-selection__rendered {
+		color: #f8fafc;
+		display: flex;
+		align-items: center;
+	}
+
+	/* ❌ ocultar chips */
+	.select2-selection__choice {
+		display: none !important;
+	}
+
+	/* ❌ eliminar input interno blanco 	.select2-search--inline {
+			display: none !important;
+		} */
+
+
+	/* ✅ BUSCADOR SELECT2 (dark) */
+	.select2-search--inline {
+		display: block !important;
+	}
+
+	.select2-search__field {
+		background-color: #0d1b2a !important;
+		color: #f8fafc !important;
+		border: none !important;
+		outline: none !important;
+		font-size: 0.85rem;
+		padding: 4px 0;
+	}
+
+	.select2-search__field::placeholder {
+		color: #94a3b8;
+	}
+
+
+	/* ❌ eliminar botón clear (CUADRO BLANCO) */
+	.select2-selection__clear {
+		display: none !important;
+	}
+
+	/* ===============================
+	   DROPDOWN
+	================================ */
+
+	.select2-dropdown {
+		background-color: #0d1b2a;
+		border: 1px solid #415a77;
+		border-radius: 0.75rem;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+	}
+
+	.select2-search__field {
+		background-color: #0d1b2a;
+		color: #f8fafc;
+		border: 1px solid #415a77;
+		border-radius: 0.4rem;
+	}
+
+	/* ===============================
+	   OPCIONES
+	================================ */
+
+	.select2-results__option {
+		color: #f8fafc;
+		padding: 10px 14px;
+	}
+
+	.select2-results__option--highlighted {
+		background-color: #1b263b !important;
+	}
+
+	/* seleccionado SIN azul */
+	.select2-results__option[aria-selected="true"] {
+		background-color: transparent !important;
+	}
+
+	/* ===============================
+	   CHECKBOX FALSO
+	================================ */
+
+	.select2-option-custom {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.fake-checkbox {
+		width: 14px;
+		height: 14px;
+		border: 2px solid #6d28d9;
+		border-radius: 3px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.fake-checkbox.checked {
+		background-color: #5b21b6;
+		border-color: #5b21b6;
+	}
+
+	.fake-checkbox.checked::after {
+		content: "✓";
+		font-size: 10px;
+		color: #ede9fe;
+		font-weight: bold;
+	}
+
+	/* ===============================
+	   FIX DEFINITIVO RECUADRO BLANCO
+	================================ */
+
+	/* estado al hacer click (active) */
+	.select2-results__option:active {
+		background-color: #415a77 !important;
+		color: #f8fafc !important;
+	}
+
+	/* estado seleccionado */
+	.select2-results__option[aria-selected="true"] {
+		background-color: #415a77 !important;
+		color: #f8fafc !important;
+	}
+
+	/* seleccionado + hover */
+	.select2-results__option--highlighted[aria-selected="true"] {
+		background-color: #1b263b !important;
+		color: #f8fafc !important;
+	}
+
+	/* evitar fondo blanco interno */
+	.select2-results__option * {
+		background-color: transparent !important;
+	}
+
+	/* ===============================
+	   FIX REAL ICONO DATE BLANCO
+	================================ */
+
+	/* Chrome / Edge / Brave */
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		filter: invert(1) brightness(2);
+		opacity: 1;
+		cursor: pointer;
+	}
+
+	/* eliminar estilos raros del navegador */
+	input[type="date"]::-webkit-inner-spin-button,
+	input[type="date"]::-webkit-clear-button {
+		filter: invert(1);
+	}
+
+	/* Firefox */
+	input[type="date"] {
+		color-scheme: dark;
+	}
+
+	/* ocultar icono nativo del date */
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		opacity: 0;
+		position: absolute;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+	}
+
+	/* ===============================
+	   SELECT2 COMO INPUT DATE
+	================================ */
+
+	/* caja principal */
+	.select2-selection--multiple {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.5rem !important;
+		height: 42px !important;
+		display: flex !important;
+		align-items: center !important;
+		padding: 0 40px 0 12px !important;
+		/* espacio icono */
+	}
+
+	/* texto placeholder */
+	.select2-selection__rendered {
+		color: #94a3b8 !important;
+		font-size: 0.85rem;
+	}
+
+	/* input interno */
+	.select2-search__field {
+		background: transparent !important;
+		color: #f8fafc !important;
+		font-size: 0.85rem !important;
+	}
+
+	/* foco igual a input */
+	.select2-container--focus .select2-selection {
+		border-color: #778DA9 !important;
+		box-shadow: 0 0 0 1px #778DA9;
+	}
+</style>
+
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+
+			<!-- Seleccion actual -->
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#415a77]/60 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+
+			<a th:href="@{/movimientos}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+	<!-- CONTENIDO PRINCIPAL -->
+	<main class="flex-1 flex flex-col">
+
+		<!-- HEADER -->
+		<header class="flex items-center justify-between bg-[#1b263b]/80 backdrop-blur-sm px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">Bajas</h1>
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<!-- SECTION CON ESPACIO LATERAL -->
+		<section class="flex-1 p-10">
+
+			<div class="flex justify-end mb-6">
+				<div class="flex gap-4">
+					<a th:href="@{/bajas/nuevo}"
+						class="bg-[#415a77] text-white px-6 py-2 rounded-lg hover:bg-[#778DA9] transition">
+						<i class="bi bi-plus-circle"></i> Nueva Baja
+					</a>
+
+					<a id="btnExcel" href="#"
+						class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 transition">
+						<i class="bi bi-file-earmark-excel"></i> Exportar Excel
+					</a>
+
+				</div>
+			</div>
+
+			<!-- CAJITA -->
+			<div class="bg-[#1b263b]/60 rounded-2xl p-8 shadow-xl border border-[#415a77]/40">
+
+				<h2 class="text-3xl font-bold mb-6 text-white text-center">
+					🍺 Listado de Bajas
+				</h2>
+
+				<!-- Filtros -->
+				<div id="filtros-container" class="relative overflow-visible">
+					<form method="get" th:action="@{/bajas/filtrar}" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
+						<!-- 🔘 BOTONES -->
+						<div class="md:col-span-3 flex justify-center gap-6 mt-6"> <button type="submit"
+								class="bg-[#415a77] hover:bg-[#778DA9] text-white px-6 py-2 rounded-lg font-semibold">
+								<i class="bi bi-funnel-fill"></i>
+								Aplicar filtros </button> <a th:href="@{/bajas/listar}"
+								class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">
+								<i class="bi bi-x-circle-fill"></i>
+								Quitar
+								filtros </a>
+						</div>
+
+						<!-- 🍺 CERVEZA -->
+
+						<div class="flex flex-col gap-1 overflow-visible">
+							<label class="text-xs text-[#94a3b8] font-semibold">Cerveza</label>
+							<select name="producto" class="select-checkbox w-full" multiple>
+
+								<option th:each="c : ${cervezas}" th:value="${c}" th:text="${c}">
+								</option>
+							</select>
+						</div>
+
+						<!-- 📅 FECHAS -->
+						<div class="flex flex-col gap-1">
+							<label class="text-xs text-[#94a3b8] font-semibold">Fechas</label>
+
+							<div class="flex gap-2">
+								<div class="relative w-full">
+									<i
+										class="bi bi-calendar-event absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none"></i>
+									<input type="date" name="fechaInicio"
+										class="w-full bg-[#0d1b2a] border border-[#415a77] rounded-lg px-3 py-2 pr-10 text-sm text-gray-100">
+								</div>
+
+								<div class="relative w-full">
+									<i
+										class="bi bi-calendar-event absolute right-3 top-1/2 -translate-y-1/2 text-white pointer-events-none"></i>
+									<input type="date" name="fechaFin"
+										class="w-full bg-[#0d1b2a] border border-[#415a77] rounded-lg px-3 py-2 pr-10 text-sm text-gray-100">
+								</div>
+							</div>
+						</div>
+
+					</form>
+				</div>
+
+				<!-- TABLA -->
+				<div class="bg-[#1b263b]/70 backdrop-blur-md shadow-xl rounded-xl overflow-hidden">
+					<table class="min-w-full table-auto text-sm text-gray-200 text-left">
+						<thead class="bg-[#415a77]/80 text-white">
+							<tr>
+								<th class="px-4 py-3">ID</th>
+								<th class="px-4 py-3">Producto</th>
+								<th class="px-4 py-3">Cantidad</th>
+								<th class="px-4 py-3">Fecha</th>
+								<th class="px-4 py-3">Detalle de baja</th>
+								<th class="px-4 py-3">Usuario</th>
+								<th class="px-4 py-3 text-center">Acción</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							<tr th:each="b : ${bajas}"
+								class="border-b border-[#415a77]/30 hover:bg-[#415a77]/20 transition">
+
+								<td class="px-4 py-3" th:text="${b.id}"></td>
+
+								<td class="px-4 py-3" th:text="${b.inventarioFinal.cerveza.nombre}"></td>
+
+								<td class="px-4 py-3" th:text="${b.cantidad}"></td>
+
+								<td class="px-4 py-3" th:text="${b.fecha_registro}"></td>
+
+								<td class="px-4 py-3" th:text="${b.razon}"></td>
+
+								<td class="px-4 py-3" th:text="${b.usuario.nombre}"></td>
+
+								<td class="px-4 py-3 text-center whitespace-nowrap">
+
+									<!-- ✏️ EDITAR -->
+									<a th:href="@{'/bajas/editar/' + ${b.id}}"
+										class="text-yellow-400 hover:text-yellow-500 mx-2" title="Editar">
+										<i class="bi bi-pencil-square text-lg"></i>
+									</a>
+
+									<!-- 🗑️ ELIMINAR (SweetAlert) -->
+									<button type="button" th:onclick="'confirmarEliminacionBaja(' + ${b.id} + ')'"
+										class="text-red-500 hover:text-red-600 mx-2" title="Eliminar">
+										<i class="bi bi-trash text-lg"></i>
+									</button>
+
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+		</section>
+
+		<!-- FOOTER FUERA DE LA CAJA -->
+		<footer class="text-center text-[#778DA9] text-sm py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍺</p>
+		</footer>
+
+	</main>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script th:src="@{/js/bajas.js}"></script>
+<script>
+	$(document).ready(function () {
+
+		$('.select-checkbox').select2({
+			closeOnSelect: false,
+			placeholder: "Selecciona cervezas",
+			allowClear: false,
+			width: '100%',
+
+			templateResult: function (data) {
+				if (!data.id) return data.text;
+
+				return $(
+					`<div class="select2-option-custom">
+						<span class="fake-checkbox"></span>
+						<span>${data.text}</span>
+					</div>`
+				);
+			},
+
+			templateSelection: function () {
+				return "Cervezas seleccionadas";
+			}
+		});
+
+		// marcar checkbox visual
+		$('.select-checkbox').on('select2:select select2:unselect', function () {
+			setTimeout(() => {
+				$('.select2-results__option').each(function () {
+					const selected = $(this).attr('aria-selected') === 'true';
+					$(this).find('.fake-checkbox')
+						.toggleClass('checked', selected);
+				});
+			}, 0);
+		});
+	});
+
+	document.getElementById("btnExcel").addEventListener("click", function (e) {
+		e.preventDefault();
+
+		// 🔥 USAR LOS FILTROS QUE YA ESTÁN EN LA URL
+		const query = window.location.search;
+
+		// 🚀 descargar respetando filtros actuales
+		window.location.href = "/bajas/exportarExcel" + query;
+	});
+</script>
+
+
+
+
+</html>

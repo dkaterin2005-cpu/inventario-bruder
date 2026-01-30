@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Producción - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script th:src="@{/js/alertas-produccion.js}"></script>
+
+</head>
+
+<style>
+	/* =========================
+	   SELECT2 – CONFIGURACIÓN BASE
+	========================= */
+
+	/* Ocultar select original */
+	select.select-checkbox {
+		position: absolute !important;
+		opacity: 0 !important;
+		pointer-events: none !important;
+		height: 0 !important;
+	}
+
+	/* Contenedor Select2 */
+	.select2-container {
+		width: 100% !important;
+		font-size: 0.85rem;
+	}
+
+	/* Caja principal */
+	.select2-container--default .select2-selection--multiple {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.5rem !important;
+		min-height: 38px !important;
+		padding: 0 10px !important;
+		display: flex;
+		align-items: center;
+	}
+
+	/* Texto renderizado */
+	.select2-selection__rendered {
+		color: #f8fafc !important;
+		padding: 0 !important;
+		display: flex !important;
+		align-items: center !important;
+	}
+
+	/* Ocultar chips */
+	.select2-selection__choice {
+		display: none !important;
+	}
+
+	/* Borde activo */
+	.select2-container--open .select2-selection--multiple {
+		border-color: #778DA9 !important;
+	}
+
+	/* =========================
+	   DROPDOWN
+	========================= */
+
+	.select2-dropdown {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.75rem !important;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+	}
+
+	/* Buscador */
+	.select2-search--dropdown {
+		background-color: #0d1b2a !important;
+		padding: 8px !important;
+	}
+
+	.select2-search__field {
+		background-color: #0d1b2a !important;
+		color: #f8fafc !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.4rem !important;
+	}
+
+	/* =========================
+	   OPCIONES
+	========================= */
+
+	.select2-results__option {
+		display: flex !important;
+		align-items: center !important;
+		gap: 10px !important;
+		padding: 10px 14px !important;
+		color: #f8fafc !important;
+	}
+
+	.select2-results__option--highlighted {
+		background-color: #1b263b !important;
+	}
+
+	.select2-results__option[aria-selected="true"] {
+		background-color: rgba(65, 90, 119, 0.35) !important;
+	}
+
+	/* Contenedor opción custom */
+	.select2-option {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	/* Checkbox custom */
+	.select2-checkbox {
+		width: 16px;
+		height: 16px;
+		accent-color: #778DA9;
+		cursor: pointer;
+	}
+
+	/* Ocultar input inline interno */
+	.select2-selection--multiple .select2-search--inline {
+		display: none !important;
+	}
+
+	/* =========================
+	   INPUT DATE OSCURO
+	========================= */
+
+	/* INPUT DATE BASE */
+	.input-date {
+		background-color: #0d1b2a;
+		color: #f8fafc;
+		border: 1px solid #415a77;
+		border-radius: 0.5rem;
+		padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+		width: 100%;
+		color-scheme: dark;
+	}
+
+	/* OCULTAR ICONO NATIVO */
+	.input-date::-webkit-calendar-picker-indicator {
+		opacity: 0;
+		position: absolute;
+		right: 0;
+		cursor: pointer;
+	}
+
+	/* CONTENEDOR */
+	.date-wrapper {
+		position: relative;
+		width: 100%;
+	}
+
+	/* ICONO BLANCO CUSTOM */
+	.date-wrapper i {
+		position: absolute;
+		right: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: white;
+		font-size: 1rem;
+		pointer-events: none;
+	}
+</style>
+
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+
+			<a th:href="@{/movimientos}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+	<!-- MAIN -->
+	<main class="flex-1 flex flex-col">
+
+		<!-- HEADER -->
+		<header class="flex items-center justify-between bg-[#1b263b]/80 backdrop-blur-sm px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">
+				Producción
+			</h1>
+
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<section class="flex-1 p-10">
+
+			<div class="flex justify-end mb-6">
+				<div class="flex gap-4">
+					<a th:href="@{/produccion/nuevo}"
+						class="bg-[#415a77] text-white px-6 py-2 rounded-lg hover:bg-[#778DA9] transition">
+						<i class="bi bi-plus-circle"></i> Nueva Producción
+					</a>
+
+					<a th:href="@{/produccion/exportarExcel(
+					    cerveza=${param.cerveza},
+					    lote=${param.lote},
+					    barril=${param.barril},
+					    fechaInicio=${param.fechaInicio},
+					    fechaFin=${param.fechaFin}
+					)}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 transition">
+						<i class="bi bi-file-earmark-excel"></i> Exportar Excel
+					</a>
+
+				</div>
+			</div>
+
+			<div class="bg-[#1b263b]/60 rounded-2xl p-8 shadow-xl border border-[#415a77]/40">
+
+				<h2 class="text-3xl font-bold mb-6 text-center text-white">
+					📦 Registro de Producción
+				</h2>
+
+				<!-- FILTROS -->
+				<form method="get" th:action="@{/produccion/filtrar}"
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+
+					<!-- 🔘 BOTONES -->
+					<div class="lg:col-span-5 flex justify-center gap-6 mt-6">
+						<button type="submit" class="bg-[#415a77] hover:bg-[#778DA9]
+											               text-white px-6 py-2 rounded-lg font-semibold">
+							<i class="bi bi-funnel-fill"></i>
+							Aplicar filtros
+						</button>
+
+						<a th:href="@{/produccion/listar}" class="bg-red-600 hover:bg-red-700
+											          text-white px-6 py-2 rounded-lg font-semibold">
+							<i class="bi bi-x-circle-fill"></i>
+							Quitar filtros
+						</a>
+					</div>
+
+					<!-- 🍺 CERVEZA -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Cerveza</label>
+						<select name="cerveza" class="select-checkbox w-full" multiple>
+							<option th:each="c : ${cervezas}" th:value="${c}" th:text="${c}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🏷️ LOTE -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Lote</label>
+						<select name="lote" class="select-checkbox w-full" multiple>
+							<option th:each="p : ${producciones}" th:value="${p.lote}" th:text="${p.lote}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🛢️ BARRIL -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Barril</label>
+						<select name="barril" class="select-checkbox w-full" multiple>
+							<option th:each="p : ${producciones}" th:value="${p.numBarril}" th:text="${p.numBarril}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 📅 FECHAS -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-[#94a3b8] font-semibold">Fechas</label>
+
+						<div class="flex gap-2">
+							<div class="date-wrapper w-full">
+								<input type="date" name="fechaInicio" class="input-date">
+								<i class="bi bi-calendar-event"></i>
+							</div>
+
+							<div class="date-wrapper w-full">
+								<input type="date" name="fechaFin" class="input-date">
+								<i class="bi bi-calendar-event"></i>
+							</div>
+						</div>
+					</div>
+
+				</form>
+
+				<!-- TABLA -->
+				<div class="overflow-x-auto rounded-xl border border-[#415a77]/40">
+					<table class="min-w-full text-sm">
+
+						<thead class="bg-[#415a77] text-white uppercase text-xs">
+							<tr>
+								<th class="py-3 px-4 text-center">ID</th>
+								<th class="py-3 px-4 text-center">Fecha</th>
+								<th class="py-3 px-4 text-center">Cerveza</th>
+								<th class="py-3 px-4 text-center">Cantidad</th>
+								<th class="py-3 px-4 text-center">Lote</th>
+								<th class="py-3 px-4 text-center">Barril</th>
+								<th class="py-3 px-4 text-center">Vencimiento</th>
+								<th class="py-3 px-4 text-center">Observación</th>
+								<th class="py-3 px-4 text-center">Acciones</th>
+							</tr>
+						</thead>
+
+						<tbody class="divide-y divide-[#415a77]/30">
+
+							<tr th:each="p : ${producciones}" class="hover:bg-[#415a77]/20 transition">
+
+								<td class="py-3 px-4 text-center" th:text="${p.id}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.fechaProduccion}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.cerveza.nombre}"></td>
+								<td class="py-3 px-4 text-center font-semibold" th:text="${p.cantidad}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.lote}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.numBarril}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.fechaVencimiento}"></td>
+								<td class="py-3 px-4 text-center" th:text="${p.observacion}"></td>
+
+								<td class="py-3 px-4 text-center space-x-3">
+									<a th:href="@{/produccion/editar/{id}(id=${p.id})}"
+										class="text-blue-400 hover:text-blue-300 transition">
+										<i class="bi bi-pencil-square text-lg"></i>
+									</a>
+
+									<a href="#" th:data-id="${p.id}" onclick="confirmarEliminacion(this)"
+										class="text-red-400 hover:text-red-300 transition">
+										<i class="bi bi-trash text-lg"></i>
+									</a>
+
+								</td>
+							</tr>
+
+							<tr th:if="${producciones == null or #lists.isEmpty(producciones)}">
+								<td colspan="9" class="text-center py-6 text-gray-300">
+									No hay registros de producción.
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</section>
+
+		<!-- FOOTER -->
+		<footer class="text-center text-[#778DA9] text-sm py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍺</p>
+		</footer>
+
+	</main>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<script>
+		function formatOption(option) {
+			if (!option.id) return option.text;
+
+			const isSelected = option.element.selected;
+
+			return $(`
+				<div class="select2-option">
+					<input type="checkbox" class="select2-checkbox" ${isSelected ? 'checked' : ''}/>
+					<span>${option.text}</span>
+				</div>
+			`);
+		}
+
+
+		function formatSelection() {
+			const data = $(this).select2('data');
+			return data.length === 0
+				? 'Seleccionar'
+				: data.length + ' seleccionados';
+		}
+
+		$('.select-checkbox').select2({
+			placeholder: 'Seleccionar',
+			closeOnSelect: false,
+			width: '100%',
+			templateResult: formatOption,
+			templateSelection: formatSelection,
+			escapeMarkup: markup => markup
+		});
+
+		$('.select-checkbox').on('select2:select select2:unselect', function () {
+			$(this).find('option').each(function () {
+				const id = this.value;
+				const checkbox = $('.select2-results__option[aria-selected][id$="' + id + '"] input');
+				checkbox.prop('checked', this.selected);
+			});
+		});
+
+
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script th:src="@{/js/alertas-produccion.js}" defer></script>
+
+</body>
+
+</html>

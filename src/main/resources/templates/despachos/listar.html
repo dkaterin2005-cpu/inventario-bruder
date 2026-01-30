@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Despachos - Bruder</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+</head>
+
+<style>
+	/*  SELECT2 – DASHBOARD BRUDER (LIMPIO)*/
+
+	/* CONTENEDOR */
+	.select2-container {
+		width: 100% !important;
+		font-size: 0.85rem;
+	}
+
+	/* SELECCIÓN (CAJA PRINCIPAL) */
+	.select2-container--default .select2-selection--multiple {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.5rem !important;
+		min-height: 38px !important;
+		padding: 0 10px !important;
+
+		display: flex;
+		align-items: center;
+	}
+
+	/* TEXTO RESUMEN */
+	.select2-selection__rendered {
+		color: #f8fafc !important;
+		padding: 0 !important;
+
+		display: flex !important;
+		align-items: center !important;
+		height: 100% !important;
+		line-height: normal !important;
+	}
+
+
+	/* ❌ OCULTAR CHIPS */
+	.select2-selection__choice {
+		display: none !important;
+	}
+
+	/* FOCUS */
+	.select2-container--open .select2-selection--multiple {
+		border-color: #778DA9 !important;
+	}
+
+	/* =========================================================
+	   DROPDOWN
+	========================================================= */
+
+	.select2-dropdown {
+		background-color: #0d1b2a !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.75rem !important;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+		overflow: hidden;
+	}
+
+	/* BUSCADOR (SIN CUADRO BLANCO) */
+	.select2-search--dropdown {
+		background-color: #0d1b2a !important;
+		padding: 8px !important;
+	}
+
+	.select2-search__field {
+		background-color: #0d1b2a !important;
+		color: #f8fafc !important;
+		border: 1px solid #415a77 !important;
+		border-radius: 0.4rem !important;
+		padding: 6px 10px !important;
+		outline: none !important;
+	}
+
+	.select2-search__field::placeholder {
+		color: #94a3b8 !important;
+	}
+
+	/* =========================================================
+	   OPCIONES
+	========================================================= */
+
+	.select2-results__options {
+		max-height: 220px !important;
+		scrollbar-width: thin;
+		scrollbar-color: #415a77 transparent;
+	}
+
+	.select2-results__option {
+		color: #f8fafc !important;
+		padding: 10px 14px !important;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.select2-results__option--highlighted {
+		background-color: #1b263b !important;
+	}
+
+	.select2-results__option[aria-selected="true"] {
+		background-color: rgba(65, 90, 119, 0.35) !important;
+	}
+
+	/* 🔥 FIX DEFINITIVO: CAJA DOBLE SELECT2 */
+
+	/* UL interno SIN fondo ni borde */
+	.select2-selection__rendered {
+		background: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+		padding: 0 !important;
+		margin: 0 !important;
+
+		display: flex !important;
+		align-items: center !important;
+		height: 100% !important;
+	}
+
+	/* Texto placeholder */
+	.select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+		color: #94a3b8 !important;
+		margin: 0 !important;
+	}
+
+	/* Quitar cualquier borde interno */
+	.select2-selection--multiple * {
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	/* 🔥 FIX TEXTO CORTADO SELECT2 */
+	.select2-selection__rendered li {
+		display: flex !important;
+		align-items: center !important;
+
+		height: auto !important;
+		line-height: normal !important;
+
+		overflow: visible !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+
+	/* Placeholder */
+	.select2-selection__placeholder {
+		display: flex !important;
+		align-items: center !important;
+
+		height: auto !important;
+		line-height: normal !important;
+		overflow: visible !important;
+	}
+
+	/* 🔥 FIX TEXTO SELECCIONADO BLANCO */
+	.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+		color: rgb(0, 0, 0) !important;
+	}
+
+	/* Texto resumen */
+	.select2-selection__rendered {
+		font-weight: 500;
+	}
+
+	/* 📅 ICONO CALENDARIO BLANCO */
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		filter: invert(1);
+		opacity: 1;
+		cursor: pointer;
+	}
+
+	/* 🔥 INPUT INTERNO DE SELECT2 (CUADRO BLANCO) */
+	.select2-selection--multiple .select2-search--inline .select2-search__field {
+		background: transparent !important;
+		color: rgb(0, 255, 255) !important;
+		border: none !important;
+		box-shadow: none !important;
+		outline: none !important;
+
+		margin: 0 !important;
+		padding: 0 !important;
+		height: auto !important;
+		line-height: normal !important;
+	}
+
+	/* 🔥 ELIMINAR INPUT INTERNO DE SELECT2 (RECTANGULO FANTASMA) */
+	.select2-search--inline {
+		display: none !important;
+	}
+</style>
+
+<body class="bg-gradient-to-br from-[#0d1b2a] via-[#1b263b] to-[#415a77] min-h-screen flex font-sans text-gray-100">
+
+	<!-- Sidebar -->
+	<aside class="w-64 bg-[#1b263b]/90 backdrop-blur-md shadow-xl flex flex-col">
+		<div class="flex items-center justify-center py-6 border-b border-[#415a77]/50">
+			<a th:href="@{/login}">
+				<img th:src="@{/images/Bruder.png}" alt="Bruder Logo"
+					class="w-20 h-20 mr-3 drop-shadow-md hover:scale-105 transition-transform duration-200">
+			</a>
+		</div>
+
+		<nav class="flex-1 mt-4 px-3 space-y-2">
+
+			<a th:href="@{/inicio}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-house-door text-xl"></i> <span>Inicio</span>
+			</a>
+
+			<a th:href="@{/cerveza/producto}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-box-seam text-xl"></i> <span>Producto</span>
+			</a>
+
+			<a th:href="@{/inventarioInicial}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-check text-xl"></i> <span>Inventario Inicial</span>
+			</a>
+
+			<a th:href="@{/inventarioFinal/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-clipboard-data text-xl"></i> <span>Inventario Final</span>
+			</a>
+
+			<a th:href="@{/bajas/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-dash-circle text-xl"></i> <span>Bajas</span>
+			</a>
+
+			<a th:href="@{/despachos/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#415a77]/60 transition">
+				<i class="bi bi-truck text-xl"></i> <span>Despachos</span>
+			</a>
+
+			<a th:href="@{/produccion/listar}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-gear-wide-connected text-xl"></i> <span>Producción</span>
+			</a>
+
+			<a th:href="@{/movimientos}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-arrow-left-right text-xl"></i> <span>Movimientos</span>
+			</a>
+
+			<a th:href="@{/puntosVenta}"
+				class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#415a77]/40 transition">
+				<i class="bi bi-shop text-xl"></i> <span>Puntos de Distribución</span>
+			</a>
+		</nav>
+
+		<!-- Cerrar Sesión -->
+		<form th:action="@{/logout}" method="post" class="p-4 border-t border-[#415a77]/50">
+			<button type="submit" class="w-full flex items-center justify-center gap-2
+							   bg-red-600 hover:bg-red-700
+							   text-white font-semibold
+							   py-2.5 rounded-lg
+							   shadow-md hover:shadow-lg
+							   transition-all duration-200
+							   focus:outline-none focus:ring-2 focus:ring-red-400">
+
+				<i class="bi bi-box-arrow-right text-lg"></i>
+				Cerrar sesión
+			</button>
+		</form>
+	</aside>
+
+
+	<!-- CONTENIDO PRINCIPAL -->
+	<main class="flex-1 flex flex-col">
+
+		<!-- ENCABEZADO -->
+		<header class="flex items-center justify-between bg-[#1b263b]/80 backdrop-blur-sm px-8 py-4 shadow-lg">
+			<h1 class="text-2xl font-semibold tracking-wide text-white">Listado de Despachos</h1>
+
+			<div class="flex items-center gap-3">
+				<i class="bi bi-person-circle text-2xl"></i>
+				<span th:text="${nombreUsuario}" class="font-medium">Usuario</span>
+			</div>
+		</header>
+
+		<!-- CONTENIDO -->
+		<section class="flex-1 p-10">
+			<div class="flex justify-end mb-6">
+				<div class="flex gap-4">
+					<a th:href="@{/despachos/nuevo}"
+						class="bg-[#415a77] text-white px-6 py-2 rounded-lg hover:bg-[#778DA9] transition">
+						<i class="bi bi-plus-circle"></i> Nuevo Despacho
+					</a>
+
+					<a th:href="@{/despachos/exportarExcel(
+					        cerveza=${filtroCerveza},
+					        tipo=${filtroTipo},
+					        loteBarril=${filtroLoteBarril},
+					        puntoVenta=${filtroPuntoVenta},
+					        fechaInicio=${filtroFechaInicio},
+					        fechaFin=${filtroFechaFin}
+					    )}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2
+					          rounded-lg shadow-md flex items-center gap-2 transition">
+						<i class="bi bi-file-earmark-excel"></i>
+						Exportar Excel
+					</a>
+
+				</div>
+			</div>
+
+			<div class="bg-[#1b263b]/60 rounded-2xl p-8 shadow-xl border border-[#415a77]/40">
+				<h2 class="text-3xl font-bold mb-6 text-center text-white">📦 Registro de Despachos</h2>
+
+				<form method="get" th:action="@{/despachos/filtrar}" class="p-6
+				             grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+					<!-- 🔘 BOTONES -->
+					<div class="col-span-full flex justify-center gap-4 pt-4">
+
+						<!-- APLICAR -->
+						<button type="submit" class="flex items-center gap-2 bg-[#415a77] hover:bg-[#778DA9]
+							 						               text-white px-6 py-2 rounded-lg font-semibold shadow-md transition">
+							<i class="bi bi-funnel-fill"></i>
+							Aplicar filtros
+						</button>
+
+						<!-- LIMPIAR -->
+						<a th:href="@{/despachos/listar}" class="flex items-center gap-2 bg-[#FF0000] hover:bg-red-700
+							 						          text-white px-6 py-2 rounded-lg font-semibold shadow-md transition">
+							<i class="bi bi-x-circle-fill"></i>
+							Quitar filtros
+						</a>
+
+					</div>
+
+					<!-- 🍺 CERVEZA -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Cerveza</label>
+						<select name="cerveza" class="select-checkbox w-full" multiple>
+							<option th:each="c : ${cervezas}" th:value="${c}" th:text="${c}"
+								th:selected="${filtroCerveza != null && filtroCerveza.contains(c)}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🍻 TIPO -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Tipo</label>
+						<select name="tipo" class="select-checkbox w-full" multiple>
+							<option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"
+								th:selected="${filtroTipo != null && filtroTipo.contains(t)}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🏷 LOTE / BARRIL -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Lote / Barril</label>
+						<select name="loteBarril" class="select-checkbox w-full" multiple>
+							<option th:each="l : ${lotesBarriles}" th:value="${l}" th:text="${l}"
+								th:selected="${filtroLoteBarril != null && filtroLoteBarril.contains(l)}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 🏪 PUNTO DE VENTA -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Punto de Venta</label>
+						<select name="puntoVenta" class="select-checkbox w-full" multiple>
+							<option th:each="p : ${puntosVenta}" th:value="${p}" th:text="${p}"
+								th:selected="${filtroPuntoVenta != null && filtroPuntoVenta.contains(p)}">
+							</option>
+						</select>
+					</div>
+
+					<!-- 📅 FECHA INICIO -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Desde</label>
+						<input type="date" name="fechaInicio" th:value="${filtroFechaInicio}" class="bg-slate-800 text-white text-sm rounded-lg px-2 py-2
+				                      border border-slate-600 focus:ring-2 focus:ring-cyan-500">
+					</div>
+
+					<!-- 📅 FECHA FIN -->
+					<div class="flex flex-col gap-1">
+						<label class="text-xs text-slate-300 font-semibold">Hasta</label>
+						<input type="date" name="fechaFin" th:value="${filtroFechaFin}" class="bg-slate-800 text-white text-sm rounded-lg px-2 py-2
+				                      border border-slate-600 focus:ring-2 focus:ring-cyan-500">
+					</div>
+
+				</form>
+
+
+				<!-- TABLA -->
+				<div class="overflow-x-auto rounded-xl border border-[#415a77]/40">
+					<table class="min-w-full text-sm">
+						<thead class="bg-[#415a77] text-white uppercase text-xs">
+							<tr>
+								<th class="py-3 px-4 text-left">Fecha</th>
+								<th class="py-3 px-4 text-left">Cerveza</th>
+								<th class="py-3 px-4 text-left">Tipo</th>
+								<th class="py-3 px-4 text-left">Lote/Barril</th>
+								<th class="py-3 px-4 text-left">Cantidad</th>
+								<th class="py-3 px-4 text-left">Punto de Venta</th>
+								<th class="py-3 px-4 text-left">Observación</th>
+								<th class="py-3 px-4 text-center">Acciones</th>
+							</tr>
+						</thead>
+
+						<tbody class="divide-y divide-[#415a77]/30" th:if="${despachos != null}">
+							<tr th:each="d : ${despachos}" class="hover:bg-[#415a77]/20 transition">
+
+								<td class="py-3 px-4" th:text="${d.fechaDespacho}"></td>
+
+								<td class="py-3 px-4" th:text="${d.inventarioFinal.cerveza.nombre}"></td>
+
+								<td class="py-3 px-4" th:text="${d.inventarioFinal.cerveza.tipo}"></td>
+
+								<td class="py-3 px-4"
+									th:text="${d.inventarioFinal.cerveza.tipo == 'Barril' ? d.inventarioFinal.numBarril : d.inventarioFinal.lote}">
+								</td>
+
+								<td class="py-3 px-4 font-semibold" th:text="${d.cantidad}"></td>
+
+								<td class="py-3 px-4" th:text="${d.puntoVenta != null ? d.puntoVenta.nombre : '—'}">
+								</td>
+								<td class="py-3 px-4 font-semibold" th:text="${d.observacion}"></td>
+
+								<td class="py-3 px-4 text-center space-x-3">
+
+									<a th:href="@{/despachos/editar/{id}(id=${d.id})}"
+										class="text-blue-400 hover:text-blue-300 transition" title="Editar">
+										<i class="bi bi-pencil-square text-lg"></i>
+									</a>
+
+									<a href="#" class="text-red-400 hover:text-red-300 transition" title="Eliminar"
+										th:onclick="'confirmarEliminacion(' + ${d.id} + ')'">
+										<i class="bi bi-trash text-lg"></i>
+									</a>
+
+								</td>
+
+							</tr>
+						</tbody>
+
+						<tbody th:if="${despachos == null or #lists.isEmpty(despachos)}">
+							<tr>
+								<td colspan="7" class="text-center py-6 text-gray-300">
+									No hay registros de despachos.
+								</td>
+							</tr>
+						</tbody>
+
+					</table>
+				</div>
+
+			</div>
+
+		</section>
+
+
+		<footer class="text-center text-[#778DA9] text-sm py-4 border-t border-[#415a77]/40">
+			<p>© 2025 Bruder Cervecería Artesanal — Todos los derechos reservados 🍺</p>
+		</footer>
+
+	</main>
+	<script>
+		function confirmarEliminacion(id) {
+			Swal.fire({
+				title: '¿Eliminar despacho?',
+				text: 'Esta acción no se puede deshacer.',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#d33',
+				cancelButtonColor: '#3085d6',
+				confirmButtonText: 'Sí, eliminar',
+				cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					window.location.href = '/despachos/eliminar/' + id;
+				}
+			});
+		}
+
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+	<script>
+		$(function () {
+
+			function formatOption(option) {
+				if (!option.id) return option.text;
+
+				const isSelected = option.selected ? 'checked' : '';
+
+				return $(`
+					<div class="flex items-center gap-2">
+						<input type="checkbox" ${isSelected} />
+						<span>${option.text}</span>
+					</div>
+				`);
+			}
+
+			$('.select-checkbox').select2({
+				placeholder: '',
+				closeOnSelect: false,
+				width: '100%',
+				minimumResultsForSearch: Infinity, // 🔥 APAGA el input interno
+				templateResult: formatOption
+			});
+
+
+		});
+	</script>
+
+
+</body>
+
+</html>
